@@ -5,49 +5,55 @@
 
 // cSpell:ignore spotify, omdbapi, bandsintown, liri, codingbootcamp, wholestring,imdb,datetime,apikey,getNameOf,Nameof,omdb
 const axios = require("axios");
-const spotify = require("node-spotify-api");
+const Spotify = require("node-spotify-api");
+var keys = require("./keys.js")
 const moment = require("moment");
 const inquirer = require("inquirer");
 require("dotenv").config();
 const fs = require("fs");
-var keys = require("./keys.js")
-var command,target
- var inputs = process.argv.slice(2);
-// console.log(inputs)
-command = inputs[0]
-// target = ''
-// for (var i = 1; i<inputs.length; i++) {
-//   if (i > 2 && i <inputs.length) {
-//     target = target + "+" + inputs[i];
-//   } else {
-//     target += inputs[i];
-//   }
-// }
 
+var command,target
+inputs=process.argv
+command = inputs[2];
+// console.log(inputs)
+
+target = ''
+for (var i = 3; i < inputs.length; i++) {
+  if (i >=3 && i <inputs.length) {
+    target += inputs[i]+ ' ';
+  } else {
+    target = inputs[i];
+  }
+}
+// command = getCommand()
+// target=getNameof(command)
 function liriBot(){
   // choices: ["Song via Spotify", "Movie via IMDB", "Concert via BandsInTown", 
-  command=getCommand()
+ // command=inquirer.prompt(questions,processAnswers);
   console.log(`Command ${command}`)
   switch (command) {
-    case "Song via Spotify":   
+    case 'spotify-this-song':
+    // "Song via Spotify":   
     //'spotify-this-song':
-      target = getNameof("Song")
+      // target = getNameof("Song")
       console.log("Spotify: " + target)
       song();
       break;
     case  'movie-this':
     // "Movie via OMDB":
-      target = getNameof("Movie")
-      console.log("Movie: " + target)
+      // target = getNameof("Movie")
+      // console.log("Movie: " + target)
       movie();
       break;
-    case "Concert via BandsInTown":
+    case 'concert-this':
+    // "Concert via BandsInTown":
     // 'concert-this':
-      target = getNameof("Band")
+      // target = getNameof("Band")
       console.log("Concert: " + target)
       concert();
       break;
-    case "Surprise Me":
+    case 'do-what-it-says':
+    // "Surprise Me":
     //'do-what-it-says':
       console.log("Do this");
       doIt();
@@ -64,11 +70,13 @@ function concert() {
 axios
 .get(queryURL)
 .then(function (response) {
+  console.log(response)
   let dateTime = moment(response.datetime).format('dddd,MM/DD,YYYY hh:mm A')
     console.log(`
   Venue: ${response.venue.name}
   Location: ${response.venue.city}, ${response.venue.region} ${response.venue.country}}
-  Event Date & Time: ${dateTime}`)
+  Event Date & Time: ${dateTime}
+  _______________`)
   // venue name 
   // venue location
     // date of event
@@ -96,6 +104,7 @@ if (target.length===0){
   //The Sign by Ace of Base
 };
 console.log("Spotify: " + target)
+var spotify = new Spotify(keys.spotify);
 spotify.search({
   type: 'track',
   query: target,
@@ -105,14 +114,16 @@ spotify.search({
     if (err) {
       return console.log(`Error: ${err}`)
     }
-  let spotifyData = data.tracks.items;
-  for(let i=0; i<spotifyData.length; i++) {
+  console.log(data.tracks.items);
+  let spotifyData = data.tracks.items[0];
+  // for(let i=0; i<spotifyData.length; i++) {
     console.log(`
-    Artist: ${data.tracks.items[i].album.artists[0].name}
-    Song: ${data.tracks.items[i].name} 
-    Album: ${data.tracks.items[i].album.name}
-    Preview Link: ${data.tracks.items[i].external_urls.spotify}`)
-  };
+    Artist: ${spotifyData.album.artists[0].name}
+    Song: ${spotifyData.name} 
+    Album: ${spotifyData.album.name}
+    Preview Link: ${spotifyData.external_urls.spotify}
+    _______________`)
+  // };
   });
 }
 
@@ -130,7 +141,7 @@ function movie() {
   // Language of the movie.
   // Plot of the movie.
   // Actors in the movie.
-  queryURL = "http://www.omdbapi.com/?t=" + target + "&type=movie&y&plot=short&apikey=trilogy"
+  queryURL = "http://www.omdbapi.com/?t=" + target.trim() + "&type=movie&y&plot=short&apikey=trilogy"
   axios
   .get(queryURL)
   .then (function (response) {
@@ -142,7 +153,8 @@ function movie() {
     Country: ${response.data.Country}
     Language: ${response.data.Language}
     Plot: ${response.data.Plot}
-    Actors: ${response.data.Actors}`)
+    Actors: ${response.data.Actors}
+    _______________`)
     })
   .catch(function (error) {
     if (error.response) {
@@ -171,6 +183,16 @@ fs.readFile('random.txt','utf8',function (err,data){
   liriBot(command,target);
 });
 }
+function processAnswers(answers){
+  return answers
+}
+var questions = [{
+  type: "list",
+  name: "command",
+  message: "What API do you want to try?",
+  choices: ["Song via Spotify", "Movie via OMDB", "Concert via BandsInTown", "Surprise Me"]
+}];
+
 function getCommand() {
   console.clear()
   inquirer.prompt([
