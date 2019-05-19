@@ -8,7 +8,7 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${workspaceFolder}/liri.js"
-    }
+      "program": "${workspaceFolder}/liri.js",
+      "args": ["movie-this","Aladdin"]
   ]
 }

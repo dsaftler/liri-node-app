@@ -1,3 +1,4 @@
+  function getCommand(){
   inquirer.prompt([
   { type: "list",
     name: "command",
@@ -8,12 +9,14 @@
    console.log(answers)
     command=answers.choices;
     console.log(command)
-    if (command === 'Exit') {
-      console.log("Thanks for playing!");
-      process.exit();
-    }
+    return command
+    // if (command === 'Exit') {
+    //   console.log("Thanks for playing!");
+    //   process.exit();
+    // }
   // targetType = split(command,' ');
   });
+}
 
 function getNameof(targetType){
   inquirer.prompt([
@@ -25,3 +28,4 @@ function getNameof(targetType){
     target = arg.target
     });
 };
+module.exports = inputs;

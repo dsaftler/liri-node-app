@@ -3,7 +3,7 @@
 //  // Querying the bandsintown api for the selected artist, the ?app_id parameter is required, but can equal anything
 // var queryURL = "https://rest.bandsintown.com/artists/" + artist + "?app_id=codingbootcamp";
 
-// cSpell:ignore spotify, omdbapi, bandsintown, liri, codingbootcamp, wholestring,imdb,datetime,apikey,getNameOf,Nameof
+// cSpell:ignore spotify, omdbapi, bandsintown, liri, codingbootcamp, wholestring,imdb,datetime,apikey,getNameOf,Nameof,omdb
 const axios = require("axios");
 const spotify = require("node-spotify-api");
 const moment = require("moment");
@@ -12,40 +12,51 @@ require("dotenv").config();
 const fs = require("fs");
 var keys = require("./keys.js")
 var command,target
-var inputs = process.argv.slice(2);
-console.log(inputs)
+ var inputs = process.argv.slice(2);
+// console.log(inputs)
 command = inputs[0]
-target = ''
-for (var i = 1; i<inputs.length; i++) {
-  if (i > 2 && i <inputs.length) {
-    target = target + "+" + inputs[i];
-  } else {
-    target += inputs[i];
-  }
-}
+// target = ''
+// for (var i = 1; i<inputs.length; i++) {
+//   if (i > 2 && i <inputs.length) {
+//     target = target + "+" + inputs[i];
+//   } else {
+//     target += inputs[i];
+//   }
+// }
 
-function liriBot(command,target){
-
+function liriBot(){
+  // choices: ["Song via Spotify", "Movie via IMDB", "Concert via BandsInTown", 
+  command=getCommand()
+  console.log(`Command ${command}`)
   switch (command) {
-    case 'spotify-this-song':
+    case "Song via Spotify":   
+    //'spotify-this-song':
+      target = getNameof("Song")
       console.log("Spotify: " + target)
       song();
       break;
-    case 'movie-this':
+    case  'movie-this':
+    // "Movie via OMDB":
+      target = getNameof("Movie")
       console.log("Movie: " + target)
       movie();
       break;
-    case 'concert-this':
+    case "Concert via BandsInTown":
+    // 'concert-this':
+      target = getNameof("Band")
       console.log("Concert: " + target)
       concert();
       break;
-    case 'do-what-it-says':
+    case "Surprise Me":
+    //'do-what-it-says':
       console.log("Do this");
       doIt();
       break;
-    default:
-      console.log('does not compute...')
     }
+    // default:
+    //   console.log('does not compute...')
+    // }
+  }
 
 
 function concert() {
@@ -160,4 +171,37 @@ fs.readFile('random.txt','utf8',function (err,data){
   liriBot(command,target);
 });
 }
+function getCommand() {
+  console.clear()
+  inquirer.prompt([
+    {
+      type: "list",
+      name: "command",
+      message: "What API do you want to try?",
+      choices: ["Song via Spotify", "Movie via OMDB", "Concert via BandsInTown", "Surprise Me"]
+    }
+  ]).then(function (answers) {
+    console.log(answers)
+    command = answers.choices;
+    console.log(command)
+    return command
+    // if (command === 'Exit') {
+    //   console.log("Thanks for playing!");
+    //   process.exit();
+    // }
+    // targetType = split(command,' ');
+  });
+}
+
+function getNameof(targetType) {
+  inquirer.prompt([
+    {
+      name: "target",
+      message: "What " + targetType
+    }
+  ]).then(function (arg) {
+    target = arg.target
+    return target
+  });
+};
 liriBot();
