@@ -1,8 +1,6 @@
 
 // omdbapi key: "http://www.omdbapi.com/?i=tt3896198&apikey=4b06ca2e"
-//  // Querying the bandsintown api for the selected artist, the ?app_id parameter is required, but can equal anything
 // var queryURL = "https://rest.bandsintown.com/artists/" + artist + "?app_id=codingbootcamp";
-
 // cSpell:ignore spotify, omdbapi, bandsintown, liri, codingbootcamp, wholestring,imdb,datetime,apikey,getNameOf,Nameof,omdb
 const axios = require("axios");
 const Spotify = require("node-spotify-api");
@@ -25,58 +23,47 @@ for (var i = 3; i < inputs.length; i++) {
     target = inputs[i];
   }
 }
-// command = getCommand()
-// target=getNameof(command)
+
 function liriBot(){
-  // choices: ["Song via Spotify", "Movie via OMDB", "Concert via BandsInTown", 
- // command=inquirer.prompt(questions,processAnswers);
-  console.log(`Command ${command}`)
+  // choices: ["Song via Spotify", "Movie via IMDB", "Concert via BandsInTown", 
   switch (command) {
     case 'spotify-this-song':
     // "Song via Spotify":   
-    //'spotify-this-song':
-      // target = getNameof("Song")
-      console.log("Spotify: " + target)
       song();
       break;
     case  'movie-this':
     // "Movie via OMDB":
-      // target = getNameof("Movie")
-      // console.log("Movie: " + target)
       movie();
       break;
     case 'concert-this':
     // "Concert via BandsInTown":
-    // 'concert-this':
-      // target = getNameof("Band")
-      console.log("Concert: " + target)
       concert();
       break;
     case 'do-what-it-says':
     // "Surprise Me":
-    //'do-what-it-says':
-      console.log("Do this");
       doIt();
       break;
+    default:
+       console.log("Sorry, spotify-this-song, movie-this, concert-this, & do-what-it says are the only valid commands.")
     }
-    // default:
-    //   console.log('does not compute...')
-    // }
   }
 
 
 function concert() {
-  queryURL = "https://rest.bandsintown.com/artists/" + target + "/events?app_id=codingbootcamp"
+  queryURL = "https://rest.bandsintown.com/artists/" + target.trim() + "/events?app_id=codingbootcamp"
+  // Querying the bandsintown api for the selected artist, the ?app_id parameter is required, but can equal anything
 axios
 .get(queryURL)
 .then(function (response) {
-  console.log(response)
-  for (let i = 0; i<response.data.length; i++) {
+  console.log("Concert: " + target)
+  // console.log(response)
+  // i'm limiting to 5, instead of response.data.length.  I don't see a limit to set in the query.  The default is supposed to be 5
+  for (let i = 0; i<5; i++) {
       // let dateTime = "05/25/2019 8:00PM"
+     var eventTime=moment(response.data[i].datetime).format('dddd, MM/DD/YYYY hh:mm A')
         console.log(`
       Venue: ${response.data[i].venue.name}
       Location: ${response.data[i].venue.city}, ${response.data[i].venue.region} ${response.data[i].venue.country}
-      var eventTime=moment(response.data[i].datetime).format('dddd,MM/DD,YYYY hh:mm A')
       Event Date & Time: ${eventTime}
       _______________`) 
     var logText = '\n---Concert----' + '\nWhere: ' + response.data[i].venue.name + '\nWhen: ' + eventTime
@@ -85,10 +72,6 @@ axios
       console.log("Log updated");
     });      
   }
-  // venue name 
-  // venue location
-    // date of event
-
 })
   .catch(function (error) {
     if (error.response) {
@@ -146,14 +129,6 @@ function movie() {
   if (target === '') {
       target = "Mr Nobody"
     }
-    // Title of the movie.
-    // Year the movie came out.
-    // IMDB Rating of the movie.
-    // Rotten Tomatoes Rating of the movie.
-    // Country where the movie was produced.
-  // Language of the movie.
-  // Plot of the movie.
-  // Actors in the movie.
   queryURL = "http://www.omdbapi.com/?t=" + target.trim() + "&type=movie&y&plot=short&apikey=trilogy"
   axios
   .get(queryURL)
@@ -191,6 +166,7 @@ function movie() {
   });
 }
 function doIt() {
+  console.log("Random.txt Command")
 fs.readFile('random.txt','utf8',function (err,data){
   if (err){
     return console.log(`Error: ${err}`)
@@ -201,15 +177,6 @@ fs.readFile('random.txt','utf8',function (err,data){
   liriBot(command,target);
 });
 }
-function processAnswers(answers){
-  return answers
-}
-var questions = [{
-  type: "list",
-  name: "command",
-  message: "What API do you want to try?",
-  choices: ["Song via Spotify", "Movie via OMDB", "Concert via BandsInTown", "Surprise Me"]
-}];
 
 function getCommand() {
   console.clear()
@@ -225,11 +192,6 @@ function getCommand() {
     command = answers.choices;
     console.log(command)
     return command
-    // if (command === 'Exit') {
-    //   console.log("Thanks for playing!");
-    //   process.exit();
-    // }
-    // targetType = split(command,' ');
   });
 }
 
@@ -243,5 +205,6 @@ function getNameof(targetType) {
     target = arg.target
     return target
   });
-};
-liriBot();
+}
+
+liriBot()
