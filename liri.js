@@ -6,10 +6,10 @@
 // cSpell:ignore spotify, omdbapi, bandsintown, liri, codingbootcamp, wholestring,imdb,datetime,apikey,getNameOf,Nameof,omdb
 const axios = require("axios");
 const Spotify = require("node-spotify-api");
-var keys = require("./keys.js")
 const moment = require("moment");
 const inquirer = require("inquirer");
 require("dotenv").config();
+var keys = require("./keys.js")
 const fs = require("fs");
 
 var command,target
@@ -28,7 +28,7 @@ for (var i = 3; i < inputs.length; i++) {
 // command = getCommand()
 // target=getNameof(command)
 function liriBot(){
-  // choices: ["Song via Spotify", "Movie via IMDB", "Concert via BandsInTown", 
+  // choices: ["Song via Spotify", "Movie via OMDB", "Concert via BandsInTown", 
  // command=inquirer.prompt(questions,processAnswers);
   console.log(`Command ${command}`)
   switch (command) {
@@ -71,16 +71,25 @@ axios
 .get(queryURL)
 .then(function (response) {
   console.log(response)
-  let dateTime = moment(response.datetime).format('dddd,MM/DD,YYYY hh:mm A')
-    console.log(`
-  Venue: ${response.venue.name}
-  Location: ${response.venue.city}, ${response.venue.region} ${response.venue.country}}
-  Event Date & Time: ${dateTime}
-  _______________`)
+  for (let i = 0; i<response.data.length; i++) {
+      // let dateTime = "05/25/2019 8:00PM"
+        console.log(`
+      Venue: ${response.data[i].venue.name}
+      Location: ${response.data[i].venue.city}, ${response.data[i].venue.region} ${response.data[i].venue.country}
+      var eventTime=moment(response.data[i].datetime).format('dddd,MM/DD,YYYY hh:mm A')
+      Event Date & Time: ${eventTime}
+      _______________`) 
+    var logText = '\n---Concert----' + '\nWhere: ' + response.data[i].venue.name + '\nWhen: ' + eventTime
+    fs.appendFile('log.txt', logText, function (err) {
+      if (err) throw err;
+      console.log("Log updated");
+    });      
+  }
   // venue name 
   // venue location
     // date of event
-  })
+
+})
   .catch(function (error) {
     if (error.response) {
       console.log(`
@@ -114,7 +123,7 @@ spotify.search({
     if (err) {
       return console.log(`Error: ${err}`)
     }
-  console.log(data.tracks.items);
+  // console.log(data.tracks.items);
   let spotifyData = data.tracks.items[0];
   // for(let i=0; i<spotifyData.length; i++) {
     console.log(`
@@ -123,7 +132,11 @@ spotify.search({
     Album: ${spotifyData.album.name}
     Preview Link: ${spotifyData.external_urls.spotify}
     _______________`)
-  // };
+    var logText = '\n---Song----' + '\nSong: ' + spotifyData.name + '\nArtist: ' + spotifyData.album.artists[0].name
+    fs.appendFile('log.txt', logText, function (err) {
+      if (err) throw err;
+      console.log("Log updated");
+    });
   });
 }
 
@@ -131,7 +144,7 @@ function movie() {
   // target = getNameof("Movie?")
   console.log("Movie: " + target);
   if (target === '') {
-      target = "Mr+Nobody"
+      target = "Mr Nobody"
     }
     // Title of the movie.
     // Year the movie came out.
@@ -155,6 +168,11 @@ function movie() {
     Plot: ${response.data.Plot}
     Actors: ${response.data.Actors}
     _______________`)
+    var logText = '\n----Movie----' + '\nTitle: ' + response.data.Title + '\nYear: ' + response.data.Year
+    fs.appendFile('log.txt', logText, function (err) {
+      if (err) throw err;
+      console.log("Log updated");
+    });
     })
   .catch(function (error) {
     if (error.response) {

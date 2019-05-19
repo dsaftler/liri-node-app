@@ -1,6 +1,7 @@
 # Logs
 .history
 test.txt
+DS_Store
 logs
 *.log
 npm-debug.log*
