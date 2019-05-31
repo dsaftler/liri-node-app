@@ -3,7 +3,7 @@ const axios = require("axios");
 //  // Querying the bandsintown api for the selected artist, the ?app_id parameter is required, but can equal anything
 // var queryURL = "https://rest.bandsintown.com/artists/" + artist + "?app_id=codingbootcamp";
 
-// cSpell:ignore spotify, omdbapi, bandsintown, liri, codingbootcamp, wholestring
+// cSpell:ignore spotify, omdbapi, bandsintown, liri, codingbootcamp, wholestring,datetime,imdb,apikey
 const spotify = require("node-spotify-api");
 const moment = require("moment");
 const inquirer = require("inquirer");
@@ -40,9 +40,8 @@ function liriBot() {
   switch(command){
     case 'concert-this':
       console.log("Concert: "+target)
-      axios
-      .get("https://rest.bandsintown.com/artists/" + target + "/events?app_id=codingbootcamp")
-      .then(function(response) {
+      axios.get("https://rest.bandsintown.com/artists/" + target + "/events?app_id=codingbootcamp")
+      .then(function (response) {
         let dateTime = moment(response.datetime).format('dddd,MM/DD,YYYY hh:mm A')
         console.log(`
         Venue: ${response.venue.name}
@@ -52,7 +51,7 @@ function liriBot() {
       // venue location
       // date of event
       })
-      .catch(function(error) {
+      .catch(function (error) {
         if (error.response){
           console.log(`
           Error on Response!
@@ -74,7 +73,7 @@ function liriBot() {
     case 'movie-this':
       console.log("Movie: "+ target)
       if (target === ''){
-        tartget = "Mr%20Nobody"
+        target = "Mr%20Nobody"
       }
     // Title of the movie.
     // Year the movie came out.
@@ -84,13 +83,8 @@ function liriBot() {
     // Language of the movie.
     // Plot of the movie.
     // Actors in the movie.
-      axios
-        .get("http://www.omdbapi.com/?t=" + target + "&type=movie&y&plot=short&incTomatoes&apikey=trilogy")
-        .then( function(response) {
-        if (err) {
-            console.log('Error: '+err)
-        } else {
-          data=JSON.parse(body)
+      axios.get("http://www.omdbapi.com/?t=" + target + "&type=movie&y&plot=short&apikey=trilogy")
+        .then(function (response) {
           console.log(`
           Title: ${response.data.Title}
           Year: ${response.data.Year}
@@ -100,14 +94,28 @@ function liriBot() {
           Language: ${response.data.Language}
           Plot: ${response.data.Plot}
           Actors: ${response.data.Actors}`) 
-          fs.appendFile("log.txt",data,'utf8'
-            function(err){
-              if (err)
-                console.log("Error appending to log.txt")
+          fs.appendFileSync("log.txt",data,function(err) {
+              if (err) {
+                return console.log(`Error appending to log.txt ${err}`)
             } else {
               console.log("Appended to log.txt")
-            });
-          };
+            };
+          });
+        })
+        .catch(function (error) {
+          if (error.response) {
+            console.log(`
+              Error on Response!
+              Status: ${error.response.status}
+              Data: ${error.response.data}
+              Headers: ${error.response.headers}`);
+          } else if (error.request) {
+            console.log(`
+              Error on Request!
+              Error: ${error.request}`);
+          } else {
+            console.log(`Something went wrong: ${error.message}`);
+          } ;
         });
       break;
     default:
