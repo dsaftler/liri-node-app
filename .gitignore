@@ -1,5 +1,6 @@
 # Logs
 .history
+.vscode
 test.txt
 DS_Store
 logs
