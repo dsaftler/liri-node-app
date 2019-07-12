@@ -1,7 +1,7 @@
 
 // omdbapi key: "http://www.omdbapi.com/?i=tt3896198&apikey=4b06ca2e"
 // var queryURL = "https://rest.bandsintown.com/artists/" + artist + "?app_id=codingbootcamp";
-<<<<<<< HEAD
+
 
 // cSpell:ignore spotify, omdbapi, bandsintown, liri, codingbootcamp, wholestring,datetime,imdb,apikey
 const spotify = require("node-spotify-api");
@@ -9,7 +9,7 @@ const spotify = require("node-spotify-api");
 // cSpell:ignore spotify, omdbapi, bandsintown, liri, codingbootcamp, wholestring,imdb,datetime,apikey,getNameOf,Nameof,omdb
 const axios = require("axios");
 const Spotify = require("node-spotify-api");
->>>>>>> 10b3a989dcd1af1dcb5f2ccc1f14f7fda60767ed
+
 const moment = require("moment");
 const inquirer = require("inquirer");
 require("dotenv").config();
@@ -28,7 +28,7 @@ for (var i = 3; i < inputs.length; i++) {
   } else {
     target = inputs[i];
   }
-<<<<<<< HEAD
+
   switch(command){
     case 'concert-this':
       console.log("Concert: "+target)
@@ -59,18 +59,18 @@ for (var i = 3; i < inputs.length; i++) {
         }  
       });
       break;
-=======
+
 }
 
 function liriBot(){
   // choices: ["Song via Spotify", "Movie via IMDB", "Concert via BandsInTown", 
   switch (command) {
->>>>>>> 10b3a989dcd1af1dcb5f2ccc1f14f7fda60767ed
+
     case 'spotify-this-song':
     // "Song via Spotify":   
       song();
       break;
-<<<<<<< HEAD
+
     case 'movie-this':
       console.log("Movie: "+ target)
       if (target === ''){
@@ -118,11 +118,12 @@ function liriBot(){
             console.log(`Something went wrong: ${error.message}`);
           } ;
         });
-=======
+
     case  'movie-this':
     // "Movie via OMDB":
       movie();
->>>>>>> 10b3a989dcd1af1dcb5f2ccc1f14f7fda60767ed
+
+      
       break;
     case 'concert-this':
     // "Concert via BandsInTown":
@@ -297,3 +298,4 @@ function getNameof(targetType) {
 }
 
 liriBot()
+
