@@ -8,11 +8,6 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${workspaceFolder}/liri.js",
-      "args": [
-        "spotify-this-song",
-        "song"
-      ]
-    }
-  ]
+      "program": "${workspaceFolder}/liri.js"}
+    ]
 }

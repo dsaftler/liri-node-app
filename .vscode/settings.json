@@ -1,3 +1,6 @@
 {
-  "breadcrumbs.enabled": true
+  "breadcrumbs.enabled": true,
+  "workbench.colorCustomizations": {
+    "tab.unfocusedActiveBorder": "#fff0"
+  }
 }
